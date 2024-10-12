@@ -1,0 +1,33 @@
+# configuration for https://rust-lang.github.io/rustfmt/
+
+# General Settings
+style_edition = "2024"
+max_width = 80
+hard_tabs = true
+tab_spaces = 4
+
+# Newline and Whitespace
+newline_style = "Unix"
+use_field_init_shorthand = true
+
+# Comments and Documentation
+normalize_comments = true
+wrap_comments = true
+comment_width = 100
+format_code_in_doc_comments = true
+normalize_doc_attributes = true
+
+# Imports and Modules
+imports_granularity = "Crate"
+group_imports = "StdExternalCrate"
+reorder_imports = true
+imports_layout = "Vertical"
+
+# Structural Formatting
+binop_separator = "Back"
+format_strings = true
+overflow_delimited_expr = true
+struct_field_align_threshold = 20
+
+# Miscellaneous
+ignore = []
