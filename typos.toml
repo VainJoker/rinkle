@@ -1,0 +1,7 @@
+# configuration for https://github.com/crate-ci/typos
+
+[files]
+extend-exclude = ["CHANGELOG.md"]
+
+[default.extend-words]
+default = "default"

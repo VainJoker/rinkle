@@ -1,0 +1,68 @@
+types = [
+    { key= "feat", value= "A new feature"},
+    { key= "fix", value= "A bug fix"},
+    { key= "docs", value= "Documentation only changes"},
+    { key= "style", value= "Changes that do not affect the meaning of the code"},
+    { key= "refactor", value= "A code change that neither fixes a bug nor adds a feature"},
+    { key= "perf", value= "A code change that improves performance"},
+    { key= "test", value= "Adding missing tests or correcting existing tests"},
+    { key= "build", value= "Changes that affect the build system or external dependencies"},
+    { key= "ci", value= "Changes to our CI configuration files and scripts"},
+    { key= "chore", value= "Other changes that don't modify src or test files"},
+    { key= "revert", value= "Reverts a previous commit"}
+]
+
+emojis = [
+    { key= "feat", value="✨"},
+    { key= "fix", value="🐛"},
+    { key= "docs", value="📚"},
+    { key= "style", value="🎨"},
+    { key= "refactor", value="♻️"},
+    { key= "perf", value="⚡️"},
+    { key= "test", value="✅"},
+    { key= "build", value="📦️"},
+    { key= "ci", value="🪶"},
+    { key= "chore", value="🔨"},
+    { key= "revert", value="◀️"}
+]
+
+api_key.gemini_key = "{{env}}"
+
+scopes = []
+
+exclude_files = [
+    "CHANGELOG.md"
+]
+
+template = """
+{{commit_icon}} {{ commit_type }}{% if commit_scope %}({{commit_scope}}){% endif %}{% if commit_breaking %}{{commit_breaking_symbol}}{% endif %}: {{ commit_subject }}{% if commit_issue %}({{commit_issue}}){% endif %}   
+{% if commit_body %}\n{{ commit_body }}{% endif %}
+{% if commit_breaking %}\n{{ commit_breaking }}{% endif %}
+"""
+
+[translation]
+from = "中文"
+to = "English"
+
+[auto]
+[auto.git]
+add = false
+push = false
+diff = false
+footer = false
+[auto.commit]
+content = false
+footer = false
+
+[hooks]
+pre-add = [
+    { command = "cargo clippy --fix --allow-dirty --allow-staged", order = 1 },
+    { command = "cargo make", order = 2 },
+]
+post-add = [
+    { command = "git status", order = 1 },
+]
+pre-commit = [
+]
+post-commit = [
+]
