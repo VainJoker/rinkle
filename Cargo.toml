@@ -1,0 +1,66 @@
+[package]
+name = "rinkle"
+version = "0.1.0"
+edition = "2021"
+authors = ["Hanjie Zhang <vainjoker@tuta.io>"]
+readme = "README.md"
+license = "GPL-3.0"
+exclude = [".github", "CHANGELOG.md"]
+repository = "https://github.com/vainjoker/rinkle"
+homepage = "https://github.com/vainjoker/rinkle"
+description = "A symlink farm manager which takes distinct sets of software and/or data located in separate directories on the filesystem, and makes them appear to be installed in a single directory tree. "
+
+[dependencies]
+thiserror = "1.0"
+anyhow = "1.0"
+
+[dev-dependencies]
+
+
+[lints.rust]
+unsafe_code = "forbid"
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+cast_possible_truncation = "allow"
+cast_possible_wrap = "allow"
+cast_precision_loss = "allow"
+cast_sign_loss = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+wildcard_imports = "allow"
+module_inception = "allow"
+as_underscore = "warn"
+deref_by_slicing = "warn"
+else_if_without_else = "warn"
+empty_line_after_doc_comments = "warn"
+equatable_if_let = "warn"
+fn_to_numeric_cast_any = "warn"
+format_push_string = "warn"
+map_err_ignore = "warn"
+missing_const_for_fn = "warn"
+mixed_read_write_in_expression = "warn"
+needless_raw_strings = "warn"
+redundant_type_annotations = "warn"
+rest_pat_in_fully_bound_structs = "warn"
+string_lit_chars_any = "warn"
+string_to_string = "warn"
+use_self = "warn"
+
+[profile.release]
+strip = true
+
+[profile.dist]
+inherits = "release"
+lto = "thin"
+
+[workspace.metadata.dist]
+allow-dirty = ["ci", "msi"]
+cargo-dist-version = "0.22.1"
+ci = ["github"]
+installers = ["shell"]
+targets = ["aarch64-apple-darwin", "x86_64-apple-darwin", "x86_64-unknown-linux-gnu", "x86_64-pc-windows-msvc"]
+pr-run-mode = "plan"
+install-updater = false
+install-path = "CARGO_HOME"
