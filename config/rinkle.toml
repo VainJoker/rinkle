@@ -3,6 +3,17 @@
 source_dir = "./examples/.dotfiles" 
 #where to symlink to
 target_dir = "./examples/linked/.config" 
+# strategy to link files, directories or mixed
+# files: it will link all files in source_dir to target_dir
+# directories: it will link all directories in source_dir to target_dir
+# adaptive: it will link all files and directories in source_dir to target_dir
+link_strategy = "adaptive"
+# conflict strategy when target item already exists, it can be skip, overwrite, backup or prompt
+# notice that this conflict strategy only works when the target item is not a symbolic link
+conflict_strategy = "backup"  
+# monitor interval, unit is second, 
+# once you save the file, it will auto link after monitor_interval
+monitor_interval = 5
 
 [log]
 # log level can be debug, info, warn, error
@@ -19,19 +30,6 @@ items = [
     "^/README.*",
     "^/LICENSE.*"
 ] 
-
-[link]
-# strategy to link files, directories or mixed
-# files: it will link all files in source_dir to target_dir
-# directories: it will link all directories in source_dir to target_dir
-# adaptive: it will link all files and directories in source_dir to target_dir
-strategy = "adaptive"
-# conflict strategy when target item already exists, it can be skip, overwrite, backup or prompt
-# notice that this conflict strategy only works when the target item is not a symbolic link
-conflict_strategy = "backup"  
-# monitor interval, unit is second, 
-# once you save the file, it will auto link after monitor_interval
-monitor_interval = 5
 
 [ui]
 # use color

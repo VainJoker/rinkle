@@ -9,6 +9,8 @@ pub enum Error {
 	/// A generic error which should not appear in production code
 	#[error(transparent)]
 	Generic(#[from] anyhow::Error),
+	#[error("Failed to load config: {0}")]
+	Config(String),
 }
 
 /// Convenience type alias for this crate's error type
