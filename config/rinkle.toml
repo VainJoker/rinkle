@@ -17,9 +17,9 @@ monitor_interval = 5
 
 [log]
 # log level can be debug, info, warn, error
-log_level = "info"
+level = "info"
 # log file path
-log_file = "./examples/logs/rinkle.log"
+path = "./examples/logs"
 
 [ignore]
 #which item in source_dir to ignore

@@ -1,4 +1,7 @@
-use std::collections::HashMap;
+use std::{
+	collections::HashMap,
+	fmt::Display,
+};
 
 use serde::{
 	Deserialize,
@@ -26,8 +29,8 @@ pub struct Global {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Log {
-	pub log_level: LogLevel,
-	pub log_file:  String,
+	pub level: LogLevel,
+	pub path:  String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -81,6 +84,8 @@ pub enum LinkStrategy {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum LogLevel {
+	#[serde(rename = "trace")]
+	Trace,
 	#[serde(rename = "debug")]
 	Debug,
 	#[serde(rename = "info")]
@@ -89,6 +94,18 @@ pub enum LogLevel {
 	Warn,
 	#[serde(rename = "error")]
 	Error,
+}
+
+impl Display for LogLevel {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		match self {
+			Self::Trace => write!(f, "trace"),
+			Self::Debug => write!(f, "debug"),
+			Self::Info => write!(f, "info"),
+			Self::Warn => write!(f, "warn"),
+			Self::Error => write!(f, "error"),
+		}
+	}
 }
 
 #[derive(Debug, Serialize, Deserialize)]

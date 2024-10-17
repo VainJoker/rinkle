@@ -13,14 +13,14 @@ description = "A symlink farm manager which takes distinct sets of software and/
 [dependencies]
 thiserror = "1.0"
 anyhow = "1.0"
-realme = {version = "0.1.5", features = ["toml"]}
+itertools = { version = "0.13.0" }
+realme = {version = "0.1.9", features = ["toml"]}
 clap = { version = "4.5.8", features = ["derive"] }
 tracing = { version = "0.1" }
-tracing-subscriber = { version = "0.3" }
 notify = { version = "6.0" }
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1.0.210", features = ["derive"] }
-
+dirs = "5.0.0"
 
 [dev-dependencies]
 

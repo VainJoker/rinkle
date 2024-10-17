@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### ✨ Features
 
+- Implement configuration parsing and error handling - ([d268271](https://github.com/vainjoker/rinkle/commit/d268271073721c7d1c60ec2aab3cb7035b0c929d))
 - Initial commit - ([1bee805](https://github.com/vainjoker/rinkle/commit/1bee8056ea3276e8680ff6955a9965de5a40f0b3))
 
 ### 🪶 Miscellaneous Tasks

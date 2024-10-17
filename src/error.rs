@@ -11,6 +11,8 @@ pub enum Error {
 	Generic(#[from] anyhow::Error),
 	#[error("Failed to load config: {0}")]
 	Config(String),
+	#[error("IO error: {0}")]
+	IO(#[from] std::io::Error),
 }
 
 /// Convenience type alias for this crate's error type
