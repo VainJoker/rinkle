@@ -14,7 +14,7 @@ description = "A symlink farm manager which takes distinct sets of software and/
 thiserror = "1.0"
 anyhow = "1.0"
 itertools = { version = "0.13.0" }
-realme = {version = "0.1.9", features = ["toml"]}
+realme = {version = "0.2.1", features = ["toml"]}
 clap = { version = "4.5.8", features = ["derive"] }
 tracing = { version = "0.1" }
 notify = { version = "6.0" }
