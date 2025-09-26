@@ -1,59 +1,8 @@
 [global]
-#which is your dotfiles directory
-source_dir = "./examples/.dotfiles" 
-#where to symlink to
-target_dir = "./examples/linked/.config" 
-# strategy to link files, directories or mixed
-# files: it will link all files in source_dir to target_dir
-# directories: it will link all directories in source_dir to target_dir
-# adaptive: it will link all files and directories in source_dir to target_dir
-link_strategy = "adaptive"
-# conflict strategy when target item already exists, it can be skip, overwrite, backup or prompt
-# notice that this conflict strategy only works when the target item is not a symbolic link
-conflict_strategy = "backup"  
-# monitor interval, unit is second, 
-# once you save the file, it will auto link after monitor_interval
-monitor_interval = 5
+source_dir = "~/dotfiles"
+target_dir = "~/.config"
+conflict_strategy = "backup"
 
-[log]
-# log level can be debug, info, warn, error
-level = "info"
-# log file path
-path = "./examples/logs"
-
-[ignore]
-#which item in source_dir to ignore
-items = [
-    "ignored",
-    ".git/*",
-    "**/.DS_Store",
-    "^/README.*",
-    "^/LICENSE.*"
-] 
-
-[ui]
-# use color
-use_color = true
-# progress display, it can be bar, percentage or none
-progress_display = "bar"
-
-# version control
-[vsc]
-# something like abc@1.0.0 or abc@default
-# i recommend use @ or : to separate the name and version/branch
-# and if the package name satisfy the template, but the part after @ does not satisfy the default,
-# it will not be linked automatically, unless you set the default_link in package section
-template = ".*@[a-zA-Z0-9_.-]+"
-default = "default"
-
-# you can specify different settings for different packages,
-# if not specified, the global settings will be used
-[packages.vim]
-#source directory for vimrc
-source = "./examples/.dotfiles/.vimrc"
-#target directory for vimrc
-target = "./examples/linked/.vimrc"
-
-[packages.vsc]
-# if it is set, the default part in vsc will be replaced by this value
-vsc_default = "myown"
+[packages.zsh]
+# Example package used in integration tests.
+# Source/target left default; target will be ~/.config/zsh

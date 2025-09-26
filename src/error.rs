@@ -1,19 +1,23 @@
-//! Error types for the crate
-
-use anyhow;
 use thiserror::Error;
 
-/// The error type for this crate
-#[derive(Error, Debug)]
+#[derive(Debug, Error)]
 pub enum Error {
-	/// A generic error which should not appear in production code
-	#[error(transparent)]
-	Generic(#[from] anyhow::Error),
-	#[error("Failed to load config: {0}")]
-	Config(String),
-	#[error("IO error: {0}")]
-	IO(#[from] std::io::Error),
-}
+    #[error("I/O error: {0}")]
+    Io(#[from] std::io::Error),
 
-/// Convenience type alias for this crate's error type
-pub type Result<T> = std::result::Result<T, Error>;
+    #[error("TOML deserialization error: {0}")]
+    Toml(#[from] toml::de::Error),
+
+    #[error("JSON serialization error: {0}")]
+    Json(#[from] serde_json::Error),
+
+    #[error("invalid config: {0}")]
+    InvalidConfig(String),
+
+    #[error("version error: {0}")]
+    Version(String),
+
+    #[error("conflict handling failed: {0}")]
+    Conflict(String),
+
+}

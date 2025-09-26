@@ -1,34 +1,35 @@
-use rinkle::{
-	cli::Cli,
-	config,
-	prelude::*,
-	rinkle::Rinkle,
+mod app;
+mod cli;
+mod config;
+mod error; // expose crate::error for internal modules
+mod linker;
+mod monitor;
+mod repl;
+mod setup;
+mod state;
+
+use clap::Parser;
+use tracing::error;
+use tracing_subscriber::{
+	EnvFilter,
+	fmt,
 };
 
-#[allow(clippy::needless_return)]
-#[tokio::main]
-async fn main() -> Result<()> {
-	let cli = Cli::parse_cli();
-	let config_path = cli
-		.config
-		.as_ref()
-		.map(std::path::PathBuf::from)
-		.or_else(|| {
-			dirs::config_local_dir()
-				.map(|dir| dir.join("rinkle").join("rinkle.toml"))
-		});
+use crate::cli::Cli;
 
-	if let Some(path) = config_path {
-		config::initialize_config(
-			&path,
-			cli.config_args.as_deref().unwrap_or(""),
-		)
-		.expect("Failed to initialize config");
+fn init_tracing() {
+	let filter = EnvFilter::try_from_default_env()
+		.unwrap_or_else(|_| EnvFilter::new("info"));
+	fmt().with_env_filter(filter).init();
+}
+
+fn main() {
+	init_tracing();
+	let cli = Cli::parse();
+	let app = app::App::new(&cli);
+
+	if let Err(e) = app.run(&cli.command) {
+		error!("command failed: {e}");
+		std::process::exit(1);
 	}
-
-	let rinkle = Rinkle::new();
-
-	rinkle.run(&cli).await.expect("Failed to run rinkle");
-
-	Ok(())
 }

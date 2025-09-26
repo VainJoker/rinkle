@@ -1,119 +1,99 @@
-use std::{
-	collections::HashMap,
-	fmt::Display,
-};
+use std::collections::HashMap;
 
-use serde::{
-	Deserialize,
-	Serialize,
-};
+use serde::Deserialize;
 
-#[derive(Debug, Serialize, Deserialize)]
+/// Represents the `[global]` section of the `rinkle.toml` config.
+#[derive(Debug, Clone, Deserialize, Default)]
+pub struct Global {
+	/// The root directory where the source dotfiles are located.
+	pub source_dir:        Option<String>,
+	/// The default directory where symlinks will be created.
+	pub target_dir:        Option<String>,
+	/// The default strategy to use when a symlink target already exists.
+	#[serde(default = "default_conflict_strategy")]
+	pub conflict_strategy: ConflictStrategy,
+	/// A list of glob patterns to ignore when linking. (Not yet implemented)
+	#[serde(default)]
+	pub ignore:            Vec<String>,
+}
+
+fn default_conflict_strategy() -> ConflictStrategy {
+	ConflictStrategy::Backup
+}
+
+/// Represents the `[vsc]` (Version Selection Control) section of the config.
+#[derive(Debug, Clone, Deserialize, Default)]
+pub struct Vsc {
+	/// A regex used to identify versioned packages from directory names.
+	/// It must contain a capture group named `version`.
+	pub template:        Option<String>,
+	/// The default version to use for packages if not otherwise specified.
+	pub default_version: Option<String>,
+}
+
+/// Represents the `[profiles]` section of the config.
+#[derive(Debug, Clone, Deserialize, Default)]
+pub struct Profiles {
+	/// The default profile, a list of tags to activate when no other profile
+	/// is active.
+	#[serde(default)]
+	pub default: Vec<String>,
+	// Additional named profiles are captured by serde's flatten attribute in
+	// the `Config` struct.
+}
+
+/// Represents a single package defined under the `[packages]` section.
+#[derive(Debug, Clone, Deserialize, Default)]
+pub struct Package {
+	/// Overrides the package's source path relative to `global.source_dir`.
+	pub source:          Option<String>,
+	/// Overrides the package's target path, making it an absolute path.
+	pub target:          Option<String>,
+	/// A list of operating systems this package should be applied on.
+	/// (e.g., "linux", "macos")
+	#[serde(default)]
+	pub os:              Vec<String>,
+	/// A list of tags used to group this package into profiles.
+	#[serde(default)]
+	pub tags:            Vec<String>,
+	/// A package-specific default version.
+	pub default_version: Option<String>,
+}
+
+/// The top-level structure representing the entire `rinkle.toml` configuration.
+#[derive(Debug, Clone, Deserialize, Default)]
 pub struct Config {
+	/// Global configuration settings.
+	#[serde(default)]
 	pub global:   Global,
-	pub log:      Log,
-	pub ignore:   Ignore,
-	pub ui:       UI,
+	/// Version Selection Control configuration.
+	#[serde(default)]
 	pub vsc:      Vsc,
+	/// A map of profile names to lists of tags.
+	#[serde(default)]
+	pub profiles: HashMap<String, Vec<String>>, // profile name -> tags
+	/// A map of package names to their configurations.
+	#[serde(default)]
 	pub packages: HashMap<String, Package>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Global {
-	pub source_dir:        String,
-	pub target_dir:        String,
-	pub link_strategy:     LinkStrategy,
-	pub conflict_strategy: ConflictStrategy,
-	pub monitor_interval:  u64,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Log {
-	pub level: LogLevel,
-	pub path:  String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Ignore {
-	pub items: Vec<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct UI {
-	pub use_color:        bool,
-	pub progress_display: ProgressDisplay,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Vsc {
-	pub template: String,
-	pub default:  String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Package {
-	#[serde(default)]
-	pub source:      Option<String>,
-	#[serde(default)]
-	pub target:      Option<String>,
-	#[serde(default)]
-	pub vsc_default: Option<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
+/// Defines the strategy for handling conflicts when a target file already
+/// exists.
+#[derive(Debug, Clone, Copy, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum ConflictStrategy {
-	#[serde(rename = "skip")]
+	/// Do not create the symlink and print a warning.
 	Skip,
-	#[serde(rename = "overwrite")]
+	/// Remove the existing file/directory before creating the symlink.
 	Overwrite,
-	#[serde(rename = "backup")]
+	/// Rename the existing file/directory with a `.bak` suffix.
 	Backup,
-	#[serde(rename = "prompt")]
+	/// Prompt the user for action. (Not yet implemented)
 	Prompt,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub enum LinkStrategy {
-	#[serde(rename = "files")]
-	Files,
-	#[serde(rename = "directories")]
-	Directories,
-	#[serde(rename = "adaptive")]
-	Adaptive,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub enum LogLevel {
-	#[serde(rename = "trace")]
-	Trace,
-	#[serde(rename = "debug")]
-	Debug,
-	#[serde(rename = "info")]
-	Info,
-	#[serde(rename = "warn")]
-	Warn,
-	#[serde(rename = "error")]
-	Error,
-}
-
-impl Display for LogLevel {
-	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-		match self {
-			Self::Trace => write!(f, "trace"),
-			Self::Debug => write!(f, "debug"),
-			Self::Info => write!(f, "info"),
-			Self::Warn => write!(f, "warn"),
-			Self::Error => write!(f, "error"),
-		}
+impl Default for ConflictStrategy {
+	fn default() -> Self {
+		Self::Backup
 	}
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub enum ProgressDisplay {
-	#[serde(rename = "bar")]
-	Bar,
-	#[serde(rename = "percentage")]
-	Percentage,
-	#[serde(rename = "none")]
-	None,
 }
