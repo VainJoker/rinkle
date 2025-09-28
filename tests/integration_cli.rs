@@ -1,19 +1,23 @@
-use std::fs;
-use std::process::Command;
+use std::{
+	fs,
+	process::Command,
+};
 
 use assert_cmd::prelude::*;
 use predicates::prelude::*;
 use tempfile::tempdir;
 
 fn bin() -> Command {
-	Command::cargo_bin("rinkle").unwrap()
+	Command::cargo_bin("rinkle").expect("failed to find binary")
 }
 
 #[test]
 fn list_and_status_json() {
 	// Use repo's example config
 	let mut cmd = bin();
-	cmd.arg("list").arg("--config").arg("config/rinkle.toml");
+	cmd.arg("list")
+		.arg("--config")
+		.arg("examples/config/rinkle.toml");
 	cmd.assert()
 		.success()
 		.stdout(predicate::str::contains("zsh"));
@@ -21,7 +25,7 @@ fn list_and_status_json() {
 	let mut cmd = bin();
 	cmd.args(["status", "--json"])
 		.arg("--config")
-		.arg("config/rinkle.toml");
+		.arg("examples/config/rinkle.toml");
 	cmd.assert()
 		.success()
 		.stdout(predicate::str::contains("\"name\": \"zsh\""));
@@ -81,10 +85,12 @@ target_dir = "{}"
 	// Check if symlink was created
 	let dst_path = dst_root.join("mypkg");
 	assert!(dst_path.exists());
-	assert!(fs::symlink_metadata(&dst_path)
-		.unwrap()
-		.file_type()
-		.is_symlink());
+	assert!(
+		fs::symlink_metadata(&dst_path)
+			.unwrap()
+			.file_type()
+			.is_symlink()
+	);
 	assert_eq!(fs::read_link(&dst_path).unwrap(), pkg_src);
 
 	// Run remove command

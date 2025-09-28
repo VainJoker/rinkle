@@ -57,6 +57,14 @@ pub struct State {
 /// This is typically `~/.config/rinkle/state.toml`. It creates the directory
 /// if it doesn't exist.
 pub fn default_state_path() -> PathBuf {
+	// Allow tests / callers to override the location for isolation.
+	if let Ok(custom) = std::env::var("RINKLE_STATE_PATH") {
+		let p = PathBuf::from(custom);
+		if let Some(parent) = p.parent() {
+			let _ = std::fs::create_dir_all(parent);
+		}
+		return p;
+	}
 	let mut path = dirs::config_dir().expect("failed to find config dir");
 	path.push("rinkle");
 	std::fs::create_dir_all(&path).expect("failed to create config dir");
@@ -86,7 +94,8 @@ pub fn load_state(path: &Path) -> Result<State, StateError> {
 	let mut content = String::new();
 	{
 		use std::io::Read;
-		// SAFETY: We only need shared read, File::read requires &mut self, so clone the file via try_clone.
+		// SAFETY: We only need shared read, File::read requires &mut self, so
+		// clone the file via try_clone.
 		let mut f = handle.try_clone()?;
 		f.read_to_string(&mut content)?;
 	}
@@ -104,10 +113,7 @@ pub fn load_state(path: &Path) -> Result<State, StateError> {
 /// This function acquires a write lock on the file, serializes the `State`
 /// struct into a TOML string, and writes it to the file, overwriting any
 // previous content.
-pub fn save_state(
-	path: &Path,
-	state: &State,
-) -> Result<(), StateError> {
+pub fn save_state(path: &Path, state: &State) -> Result<(), StateError> {
 	let file = open_state_file(path)?;
 	let mut lock = RwLock::new(file);
 	let mut handle = lock.write()?;

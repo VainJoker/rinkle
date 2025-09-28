@@ -31,7 +31,8 @@ pub fn init(
 	if !cfg_path.exists() {
 		if Confirm::with_theme(&ColorfulTheme::default())
 			.with_prompt("rinkle.toml not found. Create a new one?")
-			   .interact().map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?
+			.interact()
+			.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?
 		{
 			interactive_config(&cfg_path)?;
 		}
@@ -62,19 +63,22 @@ fn interactive_config(path: &Path) -> std::io::Result<()> {
 	let source_dir: String = Input::with_theme(&theme)
 		.with_prompt("Source directory for your dotfiles?")
 		.default("~/dotfiles".into())
-		.interact_text().map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+		.interact_text()
+		.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
 
 	let target_dir: String = Input::with_theme(&theme)
 		.with_prompt("Target directory for symlinks?")
 		.default("~/.config".into())
-		.interact_text().map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+		.interact_text()
+		.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
 
 	let strategies = &["skip", "overwrite", "backup"];
 	let strategy_idx = Select::with_theme(&theme)
 		.with_prompt("Default conflict strategy?")
 		.items(strategies)
 		.default(2) // backup
-		.interact().map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+		.interact()
+		.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
 
 	let content = format!(
 		r#"[global]

@@ -1,24 +1,26 @@
-use std::collections::HashMap;
+use std::{
+	collections::HashMap,
+	path::PathBuf,
+	sync::OnceLock,
+};
 
+use anyhow::Result;
+use directories_next::BaseDirs;
+use realme::prelude::*;
 use serde::Deserialize;
 
-/// Represents the `[global]` section of the `rinkle.toml` config.
 #[derive(Debug, Clone, Deserialize, Default)]
 pub struct Global {
 	/// The root directory where the source dotfiles are located.
-	pub source_dir:        Option<String>,
+	pub source_dir: Option<String>,
 	/// The default directory where symlinks will be created.
-	pub target_dir:        Option<String>,
+	pub target_dir: Option<String>,
 	/// The default strategy to use when a symlink target already exists.
-	#[serde(default = "default_conflict_strategy")]
-	pub conflict_strategy: ConflictStrategy,
+	// #[serde(default = "default_conflict_strategy")]
+	// pub conflict_strategy: ConflictStrategy,
 	/// A list of glob patterns to ignore when linking. (Not yet implemented)
 	#[serde(default)]
-	pub ignore:            Vec<String>,
-}
-
-fn default_conflict_strategy() -> ConflictStrategy {
-	ConflictStrategy::Backup
+	pub ignore:     Vec<String>,
 }
 
 /// Represents the `[vsc]` (Version Selection Control) section of the config.
@@ -81,19 +83,61 @@ pub struct Config {
 /// exists.
 #[derive(Debug, Clone, Copy, Deserialize)]
 #[serde(rename_all = "lowercase")]
+#[derive(Default)]
 pub enum ConflictStrategy {
 	/// Do not create the symlink and print a warning.
 	Skip,
 	/// Remove the existing file/directory before creating the symlink.
 	Overwrite,
 	/// Rename the existing file/directory with a `.bak` suffix.
+	#[default]
 	Backup,
 	/// Prompt the user for action. (Not yet implemented)
 	Prompt,
 }
 
-impl Default for ConflictStrategy {
-	fn default() -> Self {
-		Self::Backup
+pub static CFG: OnceLock<Config> = OnceLock::new();
+
+pub static CONFIG_FILE_NAME: &str = "rinkle.toml";
+pub static CONFIG_FILE_DIR: &str = "rinkle";
+
+pub fn initialize_config(
+	config_path: &str,
+) -> Result<&'static Config, anyhow::Error> {
+	let config = CFG.get_or_init(|| {
+		Config::load_config(config_path).expect("Failed to load config")
+	});
+	Ok(config)
+}
+
+pub fn get_config() -> &'static Config {
+	CFG.get().expect("Failed to get global config")
+}
+
+impl Config {
+	pub fn load_config(config_path: &str) -> Result<Self, anyhow::Error> {
+		Realme::builder()
+			.load(Adaptor::new(FileSource::<TomlParser>::new(config_path)))
+			.build()
+			.map_err(|e| anyhow::anyhow!("Load config err: {e}"))?
+			.try_deserialize()
+			.map_err(|e| anyhow::anyhow!("Deserialize config err: {e}"))
+	}
+
+	pub fn default_config_path(
+		config_path: Option<PathBuf>,
+	) -> Result<PathBuf> {
+		config_path
+			.or_else(|| {
+				BaseDirs::new().map(|d| {
+					d.config_dir()
+						.join(format!("{CONFIG_FILE_DIR}/{CONFIG_FILE_NAME}"))
+				})
+			})
+			.ok_or_else(|| anyhow::anyhow!("Cannot determine config path"))
+	}
+
+	pub const fn get_package_source_paths(&self) -> Vec<PathBuf> {
+		Vec::new()
 	}
 }

@@ -11,7 +11,7 @@ use clap::{
 /// separate directories and makes them appear to be installed in a single
 /// directory tree.
 #[derive(Debug, Parser)]
-#[command(name = "rinkle")]
+#[command(name = "rk")]
 #[command(version, about = "Symlink farm manager", long_about = None)]
 pub struct Cli {
 	/// Path to the rinkle.toml config file.
@@ -46,11 +46,7 @@ pub enum Commands {
 	/// List all packages defined in the configuration file.
 	List,
 	/// Show the link status of packages for the active profile.
-	Status {
-		/// Output the status in JSON format.
-		#[arg(long, default_value_t = false)]
-		json: bool,
-	},
+	Status,
 	/// Create symlinks for packages.
 	///
 	/// If no package names are provided, this command will link all packages
@@ -102,11 +98,10 @@ pub enum Commands {
 	/// This provides a shell for running rinkle commands.
 	Interactive,
 	/// Start the file monitor to watch for changes in the source directory.
-	///
-	/// (MVP) This runs in the foreground.
 	Start,
 	/// Stop the background file monitor.
-	///
-	/// (MVP) This is not yet implemented.
 	Stop,
+	/// [internal] Run the monitor service loop (used by the daemon).
+	#[command(hide = true)]
+	Run,
 }

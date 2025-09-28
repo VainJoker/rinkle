@@ -3,6 +3,3 @@ source_dir = "~/dotfiles"
 target_dir = "~/.config"
 conflict_strategy = "backup"
 
-[packages.zsh]
-# Example package used in integration tests.
-# Source/target left default; target will be ~/.config/zsh
