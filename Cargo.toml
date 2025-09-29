@@ -18,7 +18,7 @@ serde = { version = "1.0.203", features = ["derive"] }
 toml = "0.8.12"
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
-thiserror = "1.0.61"
+thiserror = "2.0.17"
 fd-lock = "3.0.0"
 dirs = "5"
 shellexpand = "3"
