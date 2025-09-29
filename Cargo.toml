@@ -29,7 +29,7 @@ nix = { version = "0.30", default-features = false, features = ["signal"] }
 notify = "6"
 dialoguer = "0.12.0"
 colored = "2.1.0"
-indicatif = "0.17.8"
+indicatif = "0.18.0"
 atty = "0.2"
 anyhow = "1.0.100"
 realme = { version = "0.2.3", features = ["toml"] }
