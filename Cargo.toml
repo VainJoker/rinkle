@@ -20,7 +20,7 @@ tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 thiserror = "1.0.61"
 fd-lock = "3.0.0"
-dirs = "5"
+dirs = "6"
 shellexpand = "3"
 chrono = { version = "0.4", default-features = false, features = ["clock"] }
 regex = "1"
